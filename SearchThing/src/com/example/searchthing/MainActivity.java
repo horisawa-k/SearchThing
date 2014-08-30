@@ -188,7 +188,7 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 		    startActivityForResult(intent, 2);
 		}
 	};
-	
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data){
 		if (requestCode == 2) {
@@ -333,11 +333,14 @@ public class MainActivity extends Activity implements GestureDetector.OnGestureL
 			}catch(IOException e){
 				e.printStackTrace();
 			}
-				after_photo_bmp = Bitmap.createBitmap(before_photo_bmp,0,0,before_photo_bmp.getWidth(), before_photo_bmp.getHeight(), matrix, true);
-				BitmapFactory.Options options = new BitmapFactory.Options();
-				options.inMutable = true;
-				options.inSampleSize = 2;
-				mutableBitmap = BitmapFactory.decodeFile(path, options);
-				return mutableBitmap;
+			// 必ず縦向きで撮影されたと仮定して画像をリサイズ, スケーリングする
+			EntryImage entryView = ((EntryImage) findViewById(R.id.EntryView));
+			float w = before_photo_bmp.getHeight();
+			float scale = (float)entryView.getWidth() / w;
+			Matrix matrix = new Matrix();
+			matrix.postRotate(90);
+			matrix.postScale(scale, scale);
+			matrix.postTranslate(entryView.getWidth(), 0);
+			return Bitmap.createBitmap(before_photo_bmp, 0, 0, before_photo_bmp.getWidth(), before_photo_bmp.getHeight(), matrix, true);
 		}
 }//end MainActivity
